@@ -1,0 +1,17 @@
+<div class="card" *ngIf="dato">
+  <div class="card-body">
+    <div class="card-content">
+      <div class="">
+        <h1 class="-title fs-5">Eliminar permanentemente {{dato.titulo}}</h1>
+          <i class="bi bi-x-circle fs-5" (click)="close()"></i>
+      </div>
+      <div class="body">
+        <p>¿Estas seguro que desea eliminar esta noticia permanentemente?</p>
+      </div>
+      <div class="">
+        <button type="button" class="btn btn-dark" (click)="close()" >Close</button>
+        <button type="button" class="btn btn-danger">Eliminar</button>
+      </div>
+    </div>
+  </div>
+</div>
