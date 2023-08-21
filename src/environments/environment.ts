@@ -6,5 +6,5 @@ export const environment = {
   storageBucket: "yototl.appspot.com",
   messagingSenderId: "1035123566151",
   appId: "1:1035123566151:web:0ba5b947767897e3c7b362"
-  },
+  }
 };

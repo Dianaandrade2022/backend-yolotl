@@ -14,11 +14,11 @@ import { CookieService } from 'ngx-cookie-service';
 })
 export class NoticiasComponent implements OnInit {
   logo: string = "../../../../assets/img/yolotl.webp";
-  @Input()notices?:Noticia[]
-  i:any = null
-  _id:any
-  id = ''
-  getimg = ''
+  @Input()notices?:any
+  @Input()i:any = null
+  @Input()data:any = null
+  @Input()_id:any
+
   lista: any = [{
       url: '/admin/noticias',
       icon: 'bi bi-newspaper me-2',
@@ -46,29 +46,21 @@ export class NoticiasComponent implements OnInit {
     const refdata = collection(this.firestore, 'noticias');
     const querySnapshot = await getDocs(refdata)
 
-    // const promises = querySnapshot.docs.map(async (doc) => {
-    //   const id = doc.id;
-    //   const data = doc.data();
-    //   const imgRef = ref(this.storage, 'images/' + data["img"]);
-    //   const imgUrl = await getDownloadURL(imgRef);
-    //   data["img"] = imgUrl
-    //   const docref = ref(this.storage, 'archivos/' + data["document"]);
-    //   const docurl = await getDownloadURL(docref);
-    //   data["document"] = docurl
-    //   return { data };
+    const promises = querySnapshot.docs.map(async (doc) => {
+      const id = doc.id;
+      const data = doc.data();
+      const imgRef = ref(this.storage, 'images/' + data["img"]);
+      const imgUrl = await getDownloadURL(imgRef);
+      data["img"] = imgUrl
+      const docref = ref(this.storage, 'archivos/' + data["document"]);
+      const docurl = await getDownloadURL(docref);
+      data["document"] = docurl
+      return { data , id };
+    });
+    this.notices = await Promise.all(promises);
+    this.notices = [...this.notices];
+    console.log(this.notices)
 
-    // });
-    // this.notices = await Promise.all(promises);
-    // this.notices = [...this.notices];
-    if (querySnapshot.size > 0) {
-      this.notices = querySnapshot.docs.map(doc => doc.data() as Noticia)
-    } else {
-
-    }
-    const refimg = ref(this.storage,'images/fondojpg.jpg');
-    this.getimg = await getDownloadURL(refimg);
-    console.log(this.getimg);
-    return this.getimg
   }
 
    downloadImage(url:any) {
@@ -77,14 +69,19 @@ export class NoticiasComponent implements OnInit {
     link.download = 'document.pdf';
     link.click();
   }
-  async delete(data:any){
+
+  cerrarnoticia(){
+    this.i = null
+  }
+  closemodify(){
+    this.data = null
+  }
+  modificar(data:any){
+    this.data = data
+  }
+  delete(data:any){
     this.i = data
     console.log(data)
   }
-  cerrarnoticia(){
-    this.i = null
-    console.log(this.i)
-  }
-
 
 }

@@ -19,18 +19,13 @@ img:first-of-type{
     width: 6vh;
   }
   }
-html{
-  overflow: hidden;
-}
+
 nav{
   background-color: var(--white);
 }
 a{
   text-decoration: none;
   font-family: AtmaB;
-}
-.margin{
-  height: 100vh;
 }
 
 .card{
@@ -43,7 +38,6 @@ $primary: #1ED5C3;
 
 body {
   font-family: "Open Sans", sans-serif;
-  height: 100vh;
   background: url("https://i.imgur.com/HgflTDf.jpg") 50% fixed;
   background-size: cover;
 }
@@ -61,7 +55,6 @@ body {
   display: flex;
   align-items: center;
   flex-direction: column;
-  justify-content: center;
   width: 100%;
   min-height: 100%;
   padding: 20px;
@@ -223,7 +216,7 @@ footer {
 }
 
 textarea{
-  display: block;
+display: block;
 padding: 15px 10px;
 margin-bottom: 10px;
 width: 100%;
@@ -241,5 +234,18 @@ color: #ccc;
   color: #555;
   border-color: $primary;
   border-left-width: 35px;
-} 
 }
+}
+
+.margin{
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  top: 0;
+  left: 0;
+  overflow-y: scroll;
+  z-index: 100;
+  background: rgba(darken($primary,25%),1);
+}
+

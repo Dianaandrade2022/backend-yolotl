@@ -18,7 +18,7 @@
       <img [src]="imgurl" alt="" class="w-100" *ngIf="this.Add.get('img')?.value !== '' && imgurl !== ''">
       <p class="fs-5 text-danger" *ngIf="this.Add.get('img')?.value === '' && imgurl !== ''">Agregue una imagen</p>
       <img src="../../../../../assets/img/error/errorimage.jpg" class="w-100" *ngIf="this.Add.get('img')?.value === '' && imgurl !== ''">
-      <button (click)="createnotice()" [disabled]="this.Add.invalid">
+      <button (click)="add()" [disabled]="this.Add.invalid">
         <i class="spinner"></i>
         <span class="state" >Agregar</span>
       </button>
