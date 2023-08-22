@@ -1,6 +1,6 @@
 import { Component, OnInit, Output, Input, EventEmitter, AfterViewInit, OnChanges, SimpleChanges } from '@angular/core';
 import { Firestore, doc, getDoc, updateDoc } from '@angular/fire/firestore';
-import { ref } from '@angular/fire/storage';
+import { ref, uploadBytes } from '@angular/fire/storage';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Loading, Notify } from 'notiflix';
 import { Storage, getDownloadURL } from '@angular/fire/storage';
@@ -48,10 +48,67 @@ export class ModificarComponent implements OnInit, AfterViewInit, OnChanges{
  ngOnChanges(changes: SimpleChanges): void {
   if (this.dato!= null) {
     this.getdata()
-    console.log("activado")
   }
  }
+
+  async getdata(){
+    Loading.arrows("Espere un momento ...")
+    if (this.dato!==null) {
+      const id = this.dato;
+      console.log(id);
+      const r = doc(this.firestore, 'noticias', id);
+      const docSnap = await getDoc(r);
+      this.array = docSnap.data();
+      const imgRef = ref(this.storage, 'images/' + this.array["img"]);
+      const imgUrl = await getDownloadURL(imgRef);
+      this.array["img"] = imgUrl
+      const docref = ref(this.storage, 'archivos/' + this.array["document"]);
+      const docurl = await getDownloadURL(docref);
+      this.array["document"] = docurl
+      }
+      this.update = new FormGroup({
+      titulo: new FormControl(this.array.titulo,[Validators.required]),
+      autor: new FormControl(this.array.autor,[Validators.required]),
+      fecha: new FormControl(this.array.fecha,[Validators.required]),
+      description: new FormControl(this.array.description,[Validators.required]),
+      document: new FormControl(this.array.docurl ,[Validators.required]),
+      img: new FormControl(this.array.imgUrl,[Validators.required]),
+      })
+      console.log(this.array.imgUrl,this.array.docurl)
+      const datecreate = new Date();
+      this.fechacreate = datecreate.toLocaleDateString();
+      console.log(this.fechacreate)
+      Loading.remove();
+  }
+  cerrar(){
+    this.cerrarmodificar.emit()
+  }
+  getImageData(event:any){
+    if (event.target.files) {
+    const reader = new FileReader();
+    reader.readAsDataURL(event.target.files[0]);
+    reader.onload=(event:any)=>{
+      this.imgurl = event.target.result;
+    }
+    }
+    this.urlimg = event.target.files[0]
+    console.log(this.urlimg)
+  }
+  getdoc(event:any){
+    if (event.target.files) {
+      const reader = new FileReader();
+      reader.readAsDataURL(event.target.files[0]);
+      reader.onload=(event:any)=>{
+        const docurl = event.target.result;
+      }
+      this.docurl = event.target.files[0]
+      console.log(this.docurl)
+    }
+  }
+
   async updatenotice(){
+    this.getdata()
+
     const imgref = ref(this.storage,`images/${this.urlimg.name}`);
     const docref = ref(this.storage,`archivos/${this.docurl.name}`);
     const reference = doc(this.firestore,'noticias',this.dato)
@@ -65,6 +122,8 @@ export class ModificarComponent implements OnInit, AfterViewInit, OnChanges{
     }
     try {
       Loading.arrows("enviando..")
+      uploadBytes(imgref,this.urlimg,{contentType:'image/*'}).then().catch(error=>console.log(error))
+      uploadBytes(docref,this.docurl,{contentType:'application/pdf'}).then().catch(error=>console.log(error))
       updateDoc(reference,docupdate).then(()=>
         {
           Notify.success("Actualizado")
@@ -77,51 +136,5 @@ export class ModificarComponent implements OnInit, AfterViewInit, OnChanges{
     } catch (error) {
       Notify.failure("error")
     }
-  }
-  async getdata(){
-    Loading.arrows("Espere un momento ...")
-    if (this.dato!==null) {
-    const id = this.dato;
-      console.log(id);
-      const r = doc(this.firestore, 'noticias', id);
-      const docSnap = await getDoc(r);
-      this.array = docSnap.data();
-      const imgRef = ref(this.storage, 'images/' + this.array["img"]);
-      const imgUrl = await getDownloadURL(imgRef);
-      this.array["img"] = imgUrl
-      const docref = ref(this.storage, 'archivos/' + this.array["document"]);
-      const docurl = await getDownloadURL(docref);
-      this.array["document"] = docurl
-      console.log(this.array);
-      console.log(this.array.autor)
-      }
-      this.update = new FormGroup({
-      titulo: new FormControl(this.array.titulo),
-      autor: new FormControl(this.array.autor),
-      fecha: new FormControl(this.array.fecha),
-      description: new FormControl(this.array.description),
-      document: new FormControl(this.array["document"]),
-      img: new FormControl(this.imgurl),
-      })
-      const datecreate = new Date();
-      this.fechacreate = datecreate.toLocaleDateString();
-      console.log(this.fechacreate)
-      Loading.remove();
-  }
-  cerrar(){
-    this.cerrarmodificar.emit()
-  }
-  async getImageData(event:any){
-    if (this.dato!==null) {
-      this.imgurl = this.array.img
-      if (event.target.files) {
-        const reader = new FileReader();
-        reader.readAsDataURL(event.target.files[0]);
-        reader.onload=(event:any)=>{
-          this.imgurl = event.target.result;
-        }
-      }
-    }
-
-  }
+ }
 }

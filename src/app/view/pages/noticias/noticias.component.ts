@@ -59,7 +59,6 @@ export class NoticiasComponent implements OnInit {
     });
     this.notices = await Promise.all(promises);
     this.notices = [...this.notices];
-    console.log(this.notices)
 
   }
 

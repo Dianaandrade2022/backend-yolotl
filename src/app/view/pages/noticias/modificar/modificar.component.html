@@ -12,10 +12,12 @@
       <p class="text-primary py-0 my-0">Descripción</p>
       <textarea rows="5" formControlName="description" class="d-block"></textarea>
       <p class="text-primary py-0 my-0">Archivo</p>
-      <input type="file"  class="inputfile" class="form-control"formControlName="document" accept="application/pdf"/>
+      <input type="file"  class="inputfile" class="form-control"formControlName="document" accept="application/pdf" (change)="getdoc($event)"/>
       <p class="text-primary py-0 my-0">Imagén</p>
-      <input type="file"  class="inputfile" class="form-control"formControlName="img" accept="image/*" (change)="getImageData($event)"/>
-      <img [src]="imgurl" alt="" class="w-100">
+      <input type="file"  class="inputfile" class="form-control"formControlName="img"accept="image/*" (change)="getImageData($event)"/>
+      <img [src]="imgurl" alt="" class="w-100" *ngIf="this.update.get('img')?.value !== '' && imgurl !== ''">
+      <p class="fs-5 text-danger" *ngIf="this.update.get('img')?.value === '' && imgurl !== ''">Agregue una imagen</p>
+      <img src="../../../../../assets/img/error/errorimage.jpg" class="w-100" *ngIf="this.update.get('img')?.value === '' && imgurl !== ''">
       <button (click)="updatenotice()" [disabled]="update.invalid">
         <i class="spinner"></i>
         <span class="state" >Modificar</span>
